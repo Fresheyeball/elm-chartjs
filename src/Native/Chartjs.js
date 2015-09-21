@@ -3521,7 +3521,6 @@
     render = function(arg$){
       var w, h, data, wrap, canvas, gen;
       w = arg$.w, h = arg$.h, data = arg$.data;
-      console.log("data->", data);
       wrap = createNode("div");
       wrap.style.width = px(w);
       wrap.style.height = px(h);
