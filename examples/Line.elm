@@ -38,6 +38,5 @@ view isClicked = div []
   [ chart (if (Debug.log "isClicked" isClicked) then data' else data)
   , button [E.onClick mail.address True] [text "update"] ]
 
-
 main : Signal Html
 main = view <~ mail.signal

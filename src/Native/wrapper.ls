@@ -22,45 +22,34 @@ createNode = (elementType) ->
   n.style.position = "relative"
   return n
 
-makeCanvas = (w, h) ->
-  canvas = NativeElement.createNode 'canvas'
+genLineChart = ({w, h, data}, canvas) ->
+  new Chart canvas.getContext "2d" .Line data, {}
+
+setWrapSize = (wrap, {w, h}) ->
+  wrap.style.width = px w
+  wrap.style.height = px h
+  canvas = wrap.firstChild
   canvas.style.width  = px w
   canvas.style.height = px h
   canvas.style.display = "block"
   ratio = window.devicePixelRatio || 1
   canvas.width  = w * ratio
   canvas.height = h * ratio
-  return canvas
 
-genLineChart = ({w, h, data}, canvas) ->
-  new Chart canvas.getContext "2d" .Line data, {}
-
-update = (wrap, oldModel, newModel) ->
-  {w, h, data} = newModel
-  {labels, datasets} = data
-  {__chart} = wrap
-  if __chart
-    /*if datasets.length == oldModel.data.datasets.length
-      __chart.labels = labels
-      for d, i in (new Chart makeCanvas(newModel.h, newModel.w).getContext "2d" .Line newModel.data, {}).datasets
-        for p, j in d.points
-          if p.value !== __chart.datasets[i].points[j].value
-            __chart.datasets[i].points[j].value = p.value
-      __chart.update()
-    else*/
-    __chart.clear().destroy()
-    wrap.__chart = genLineChart {w, h, data}, wrap.firstChild
-
+update = (wrap, _, newModel) ->
+  if wrap.__chart
+    wrap.__chart.clear().destroy()
+    setWrapSize wrap, newModel
+    wrap.__chart = genLineChart newModel, wrap.firstChild
   return wrap
 
-render = ({w, h, data}) ->
+render = (model) ->
   wrap = createNode "div"
-  wrap.style.width = px w
-  wrap.style.height = px h
-  canvas = makeCanvas w, h
+  canvas = NativeElement.createNode 'canvas'
   wrap.appendChild canvas
-  setTimeout (-> wrap.__chart = genLineChart {w, h, data}, canvas), 0
-  update wrap, {w, h, data}, {w, h, data}
+  setWrapSize wrap, model
+  setTimeout (-> wrap.__chart = genLineChart model, canvas), 0
+  update wrap, model, model
   return wrap
 
 showRGBA = ({_0,_1,_2,_3}) ->

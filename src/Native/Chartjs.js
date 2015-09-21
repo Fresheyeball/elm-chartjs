@@ -3485,7 +3485,7 @@
     };
   };
   make(function(localRuntime){
-    var ref$, v, NativeElement, toArray, px, createNode, makeCanvas, genLineChart, update, render, showRGBA, lineChartRaw;
+    var ref$, v, NativeElement, toArray, px, createNode, genLineChart, setWrapSize, update, render, showRGBA, lineChartRaw;
     localRuntime.Native || (localRuntime.Native = {});
     (ref$ = localRuntime.Native).Chartjs || (ref$.Chartjs = {});
     if (v = localRuntime.Native.Chartjs.values) {
@@ -3505,69 +3505,42 @@
       n.style.position = "relative";
       return n;
     };
-    makeCanvas = function(w, h){
-      var canvas, ratio;
-      canvas = NativeElement.createNode('canvas');
-      canvas.style.width = px(w);
-      canvas.style.height = px(h);
-      canvas.style.display = "block";
-      ratio = window.devicePixelRatio || 1;
-      canvas.width = w * ratio;
-      canvas.height = h * ratio;
-      return canvas;
-    };
     genLineChart = function(arg$, canvas){
       var w, h, data;
       w = arg$.w, h = arg$.h, data = arg$.data;
       return new Chart(canvas.getContext("2d")).Line(data, {});
     };
-    update = function(wrap, oldModel, newModel){
-      var w, h, data, labels, datasets, __chart;
-      w = newModel.w, h = newModel.h, data = newModel.data;
-      labels = data.labels, datasets = data.datasets;
-      __chart = wrap.__chart;
-      if (__chart) {
-        /*if datasets.length == oldModel.data.datasets.length
-          __chart.labels = labels
-          for d, i in (new Chart makeCanvas(newModel.h, newModel.w).getContext "2d" .Line newModel.data, {}).datasets
-            for p, j in d.points
-              if p.value !== __chart.datasets[i].points[j].value
-                __chart.datasets[i].points[j].value = p.value
-          __chart.update()
-        else*/
-        __chart.clear().destroy();
-        wrap.__chart = genLineChart({
-          w: w,
-          h: h,
-          data: data
-        }, wrap.firstChild);
+    setWrapSize = function(wrap, arg$){
+      var w, h, canvas, ratio;
+      w = arg$.w, h = arg$.h;
+      wrap.style.width = px(w);
+      wrap.style.height = px(h);
+      canvas = wrap.firstChild;
+      canvas.style.width = px(w);
+      canvas.style.height = px(h);
+      canvas.style.display = "block";
+      ratio = window.devicePixelRatio || 1;
+      canvas.width = w * ratio;
+      return canvas.height = h * ratio;
+    };
+    update = function(wrap, _, newModel){
+      if (wrap.__chart) {
+        wrap.__chart.clear().destroy();
+        setWrapSize(wrap, newModel);
+        wrap.__chart = genLineChart(newModel, wrap.firstChild);
       }
       return wrap;
     };
-    render = function(arg$){
-      var w, h, data, wrap, canvas;
-      w = arg$.w, h = arg$.h, data = arg$.data;
+    render = function(model){
+      var wrap, canvas;
       wrap = createNode("div");
-      wrap.style.width = px(w);
-      wrap.style.height = px(h);
-      canvas = makeCanvas(w, h);
+      canvas = NativeElement.createNode('canvas');
       wrap.appendChild(canvas);
+      setWrapSize(wrap, model);
       setTimeout(function(){
-        return wrap.__chart = genLineChart({
-          w: w,
-          h: h,
-          data: data
-        }, canvas);
+        return wrap.__chart = genLineChart(model, canvas);
       }, 0);
-      update(wrap, {
-        w: w,
-        h: h,
-        data: data
-      }, {
-        w: w,
-        h: h,
-        data: data
-      });
+      update(wrap, model, model);
       return wrap;
     };
     showRGBA = function(arg$){
