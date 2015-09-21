@@ -3485,7 +3485,7 @@
     };
   };
   make(function(localRuntime){
-    var ref$, v, NativeElement, toArray, px, createNode, makeCanvas, update, render, showRGBA, lineChartRaw;
+    var ref$, v, NativeElement, toArray, px, createNode, makeCanvas, genLineChart, update, render, showRGBA, lineChartRaw;
     localRuntime.Native || (localRuntime.Native = {});
     (ref$ = localRuntime.Native).Chartjs || (ref$.Chartjs = {});
     if (v = localRuntime.Native.Chartjs.values) {
@@ -3515,31 +3515,52 @@
       canvas.height = h * ratio;
       return canvas;
     };
-    update = function(c, __, arg$){
-      var labels, datasets;
-      labels = arg$.labels, datasets = arg$.datasets;
-      if (c.__chart) {
-        c.__chart.labels = labels;
-        c.__chart.datasets = datasets;
-        c.__chart.update();
+    genLineChart = function(arg$, canvas){
+      var w, h, data;
+      w = arg$.w, h = arg$.h, data = arg$.data;
+      return new Chart(canvas.getContext("2d")).Line(data, {});
+    };
+    update = function(wrap, oldModel, newModel){
+      var w, h, data, labels, datasets, __chart;
+      w = newModel.w, h = newModel.h, data = newModel.data;
+      labels = data.labels, datasets = data.datasets;
+      __chart = wrap.__chart;
+      if (__chart) {
+        /*if datasets.length == oldModel.data.datasets.length
+          __chart.labels = labels
+          for d, i in (new Chart makeCanvas(newModel.h, newModel.w).getContext "2d" .Line newModel.data, {}).datasets
+            for p, j in d.points
+              if p.value !== __chart.datasets[i].points[j].value
+                __chart.datasets[i].points[j].value = p.value
+          __chart.update()
+        else*/
+        __chart.clear().destroy();
+        setTimeout(function(){
+          return wrap.__chart = genLineChart({
+            w: w,
+            h: h,
+            data: data
+          }, wrap.firstChild);
+        }, 0);
       }
-      return c;
+      return wrap;
     };
     render = function(arg$){
-      var w, h, data, wrap, canvas, gen;
+      var w, h, data, wrap, canvas;
       w = arg$.w, h = arg$.h, data = arg$.data;
       wrap = createNode("div");
       wrap.style.width = px(w);
       wrap.style.height = px(h);
       canvas = makeCanvas(w, h);
-      gen = function(){
-        return new Chart(canvas.getContext("2d")).Line(data, {});
-      };
       wrap.appendChild(canvas);
       setTimeout(function(){
-        return canvas.__chart = gen();
-      }, 1000);
-      update(canvas, {
+        return wrap.__chart = genLineChart({
+          w: w,
+          h: h,
+          data: data
+        }, canvas);
+      }, 0);
+      update(wrap, {
         w: w,
         h: h,
         data: data

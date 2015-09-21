@@ -30,23 +30,35 @@ makeCanvas = (w, h) ->
   canvas.height = h * ratio
   return canvas
 
-update = (c, __, {labels, datasets}) ->
-  if c.__chart
-    c.__chart.labels = labels
-    c.__chart.datasets = datasets
-    c.__chart.update()
-  return c
+genLineChart = ({w, h, data}, canvas) ->
+  new Chart canvas.getContext "2d" .Line data, {}
+
+update = (wrap, oldModel, newModel) ->
+  {w, h, data} = newModel
+  {labels, datasets} = data
+  {__chart} = wrap
+  if __chart
+    /*if datasets.length == oldModel.data.datasets.length
+      __chart.labels = labels
+      for d, i in (new Chart makeCanvas(newModel.h, newModel.w).getContext "2d" .Line newModel.data, {}).datasets
+        for p, j in d.points
+          if p.value !== __chart.datasets[i].points[j].value
+            __chart.datasets[i].points[j].value = p.value
+      __chart.update()
+    else*/
+    __chart.clear().destroy()
+    setTimeout (-> wrap.__chart = genLineChart {w, h, data}, wrap.firstChild), 0
+
+  return wrap
 
 render = ({w, h, data}) ->
   wrap = createNode "div"
   wrap.style.width = px w
   wrap.style.height = px h
   canvas = makeCanvas w, h
-  gen = -> new Chart canvas.getContext "2d" .Line data, {}
-
   wrap.appendChild canvas
-  setTimeout (-> canvas.__chart = gen!), 1000
-  update canvas, {w, h, data}, {w, h, data}
+  setTimeout (-> wrap.__chart = genLineChart {w, h, data}, canvas), 0
+  update wrap, {w, h, data}, {w, h, data}
   return wrap
 
 showRGBA = ({_0,_1,_2,_3}) ->
