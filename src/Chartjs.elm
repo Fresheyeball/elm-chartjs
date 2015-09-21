@@ -9,6 +9,9 @@ import Graphics.Element exposing (Element)
 import Native.Chartjs
 
 {-| foo -}
+type JSArray a = JSArray
+
+{-| foo -}
 type alias Label = String
 
 {-| foo -}
@@ -40,10 +43,43 @@ defLineStyle f =
 type alias LineSeries = (Label, LineStyle, List Float)
 
 {-| foo -}
-type alias LineData =
-  { labels: Labels
-  , datasets: List LineSeries }
+type alias LineData = (Labels, List LineSeries)
+
+type alias LineDataRaw =
+  { labels : JSArray String
+     , datasets : JSArray
+      { label : String
+      , fillColor : String
+      , strokeColor : String
+      , pointColor : String
+      , pointStrokeColor : String
+      , pointHighlightFill : String
+      , pointHighlightStroke : String
+      , data : JSArray Float } }
+
+decodeLineData : LineData -> LineDataRaw
+decodeLineData (labels, series) = let
+  decodeLineSeries (label, style, d) =
+    { label = label
+    , fillColor = showRGBA style.fillColor
+    , strokeColor = showRGBA style.strokeColor
+    , pointColor = showRGBA style.pointColor
+    , pointStrokeColor = showRGBA style.pointStrokeColor
+    , pointHighlightFill = showRGBA style.pointHighlightFill
+    , pointHighlightStroke = showRGBA style.pointHighlightStroke
+    , data = toArray d}
+  in { labels = toArray labels
+     , datasets = toArray (List.map decodeLineSeries series) }
+
+toArray : List a -> JSArray a
+toArray = Native.Chartjs.toArray
+
+showRGBA : Color -> String
+showRGBA = Native.Chartjs.showRGBA
 
 {-| its a chart  -}
-chart : Int -> Int -> LineData -> Element
-chart = Native.Chartjs.chart
+lineChartRaw : Int -> Int -> LineDataRaw -> Element
+lineChartRaw = Native.Chartjs.lineChartRaw
+
+lineChart : Int -> Int -> LineData -> Element
+lineChart w h = lineChartRaw w h << decodeLineData

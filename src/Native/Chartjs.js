@@ -3485,13 +3485,14 @@
     };
   };
   make(function(localRuntime){
-    var ref$, v, NativeElement, px, createNode, makeCanvas, update, render, chart;
+    var ref$, v, NativeElement, toArray, px, createNode, makeCanvas, update, render, showRGBA, lineChartRaw;
     localRuntime.Native || (localRuntime.Native = {});
     (ref$ = localRuntime.Native).Chartjs || (ref$.Chartjs = {});
     if (v = localRuntime.Native.Chartjs.values) {
       return v;
     }
     NativeElement = Elm.Native.Graphics.Element.make(localRuntime);
+    toArray = Elm.Native.List.make(localRuntime).toArray;
     px = function(it){
       return it + "px";
     };
@@ -3520,7 +3521,7 @@
     render = function(arg$){
       var w, h, data, wrap, canvas, gen;
       w = arg$.w, h = arg$.h, data = arg$.data;
-      console.log(data);
+      console.log("data->", data);
       wrap = createNode("div");
       wrap.style.width = px(w);
       wrap.style.height = px(h);
@@ -3541,7 +3542,12 @@
       });
       return wrap;
     };
-    chart = function(w, h, data){
+    showRGBA = function(arg$){
+      var _0, _1, _2, _3;
+      _0 = arg$._0, _1 = arg$._1, _2 = arg$._2, _3 = arg$._3;
+      return "rgba(" + _0 + "," + _1 + "," + _2 + "," + _3 + ")";
+    };
+    lineChartRaw = function(w, h, data){
       return A3(NativeElement.newElement, w, h, {
         ctor: 'Custom',
         type: 'Chart',
@@ -3555,7 +3561,9 @@
       });
     };
     return localRuntime.Native.Chartjs.values = {
-      chart: F3(chart)
+      toArray: toArray,
+      showRGBA: showRGBA,
+      lineChartRaw: F3(lineChartRaw)
     };
   });
 }).call(this);
