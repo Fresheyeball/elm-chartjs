@@ -3493,9 +3493,10 @@
     }
     NativeElement = Elm.Native.Graphics.Element.make(localRuntime);
     toArray = Elm.Native.List.make(localRuntime).toArray;
-    px = function(it){
-      return it + "px";
+    px = function(x){
+      return x + "px";
     };
+    Chart.defaults.global.animation = false;
     createNode = function(elementType){
       var n;
       n = document.createElement(elementType);
@@ -3535,13 +3536,11 @@
           __chart.update()
         else*/
         __chart.clear().destroy();
-        setTimeout(function(){
-          return wrap.__chart = genLineChart({
-            w: w,
-            h: h,
-            data: data
-          }, wrap.firstChild);
-        }, 0);
+        wrap.__chart = genLineChart({
+          w: w,
+          h: h,
+          data: data
+        }, wrap.firstChild);
       }
       return wrap;
     };

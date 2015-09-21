@@ -11,7 +11,9 @@ return v if v = localRuntime.Native.Chartjs.values
 NativeElement = Elm.Native.Graphics.Element.make localRuntime
 {toArray} = Elm.Native.List.make localRuntime
 
-px = -> "#{it}px"
+px = (x) -> "#{x}px"
+
+Chart.defaults.global.animation = false
 
 createNode = (elementType) ->
   n = document.createElement elementType
@@ -47,7 +49,7 @@ update = (wrap, oldModel, newModel) ->
       __chart.update()
     else*/
     __chart.clear().destroy()
-    setTimeout (-> wrap.__chart = genLineChart {w, h, data}, wrap.firstChild), 0
+    wrap.__chart = genLineChart {w, h, data}, wrap.firstChild
 
   return wrap
 
