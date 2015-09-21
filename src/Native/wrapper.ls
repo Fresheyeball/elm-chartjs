@@ -30,7 +30,12 @@ makeCanvas = (w, h) ->
   canvas.height = h * ratio
   return canvas
 
-update = (n, _, __) -> n
+update = (c, __, {labels, datasets}) ->
+  if c.__chart
+    c.__chart.labels = labels
+    c.__chart.datasets = datasets
+    c.__chart.update()
+  return c
 
 render = ({w, h, data}) ->
   wrap = createNode "div"
@@ -41,7 +46,7 @@ render = ({w, h, data}) ->
 
   wrap.appendChild canvas
   setTimeout (-> canvas.__chart = gen!), 1000
-  update canvas, {w, h}, {w, h}
+  update canvas, {w, h, data}, {w, h, data}
   return wrap
 
 showRGBA = ({_0,_1,_2,_3}) ->

@@ -3515,8 +3515,15 @@
       canvas.height = h * ratio;
       return canvas;
     };
-    update = function(n, _, __){
-      return n;
+    update = function(c, __, arg$){
+      var labels, datasets;
+      labels = arg$.labels, datasets = arg$.datasets;
+      if (c.__chart) {
+        c.__chart.labels = labels;
+        c.__chart.datasets = datasets;
+        c.__chart.update();
+      }
+      return c;
     };
     render = function(arg$){
       var w, h, data, wrap, canvas, gen;
@@ -3534,10 +3541,12 @@
       }, 1000);
       update(canvas, {
         w: w,
-        h: h
+        h: h,
+        data: data
       }, {
         w: w,
-        h: h
+        h: h,
+        data: data
       });
       return wrap;
     };
