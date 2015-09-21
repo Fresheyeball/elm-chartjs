@@ -33,7 +33,6 @@ makeCanvas = (w, h) ->
 update = (n, _, __) -> n
 
 render = ({w, h, data}) ->
-  console.log "data->", data
   wrap = createNode "div"
   wrap.style.width = px w
   wrap.style.height = px h
