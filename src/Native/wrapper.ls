@@ -1,7 +1,7 @@
 Elm.Native ||= {}
 Elm.Native.Chartjs ||= {}
 
-make = -> Elm.Native.Chartjs = make : it
+make = (x) -> Elm.Native.Chartjs = make : x
 localRuntime <- make
 
 localRuntime.Native ||= {}

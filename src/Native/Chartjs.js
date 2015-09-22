@@ -3479,9 +3479,9 @@
   var ref$, make;
   Elm.Native || (Elm.Native = {});
   (ref$ = Elm.Native).Chartjs || (ref$.Chartjs = {});
-  make = function(it){
+  make = function(x){
     return Elm.Native.Chartjs = {
-      make: it
+      make: x
     };
   };
   make(function(localRuntime){

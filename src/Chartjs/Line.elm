@@ -8,6 +8,7 @@ module Chartjs.Line
 import Color exposing (white, rgba, Color)
 import Chartjs exposing (Label, JSArray, Labels, toArray, showRGBA)
 import Graphics.Element exposing (Element)
+import Native.Chartjs
 
 type alias Options =
   { scaleShowGridLines : Bool
@@ -92,7 +93,7 @@ decodeData (labels, series) = let
     , pointStrokeColor = showRGBA style.pointStrokeColor
     , pointHighlightFill = showRGBA style.pointHighlightFill
     , pointHighlightStroke = showRGBA style.pointHighlightStroke
-    , data = toArray d}
+    , data = toArray d }
   in { labels = toArray labels
      , datasets = toArray (List.map decodeLineSeries series) }
 
