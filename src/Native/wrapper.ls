@@ -38,7 +38,7 @@ setWrapSize = (wrap, {w, h}) ->
 
 update = (wrap, _, newModel) ->
   if wrap.__chart
-    wrap.__chart.clear().destroy()
+    wrap.__chart.clear!.destroy!
     setWrapSize wrap, newModel
     wrap.__chart = genLineChart newModel, wrap.firstChild
   return wrap
