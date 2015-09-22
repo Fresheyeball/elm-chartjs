@@ -3506,9 +3506,9 @@
       return n;
     };
     genLineChart = function(arg$, canvas){
-      var w, h, data;
-      w = arg$.w, h = arg$.h, data = arg$.data;
-      return new Chart(canvas.getContext("2d")).Line(data, {});
+      var w, h, data, options;
+      w = arg$.w, h = arg$.h, data = arg$.data, options = arg$.options;
+      return new Chart(canvas.getContext("2d")).Line(data, options);
     };
     setWrapSize = function(wrap, arg$){
       var w, h, canvas, ratio;
@@ -3548,7 +3548,7 @@
       _0 = arg$._0, _1 = arg$._1, _2 = arg$._2, _3 = arg$._3;
       return "rgba(" + _0 + "," + _1 + "," + _2 + "," + _3 + ")";
     };
-    lineChartRaw = function(w, h, data){
+    lineChartRaw = function(w, h, data, options){
       return A3(NativeElement.newElement, w, h, {
         ctor: 'Custom',
         type: 'Chart',
@@ -3557,14 +3557,15 @@
         model: {
           w: w,
           h: h,
-          data: data
+          data: data,
+          options: options
         }
       });
     };
     return localRuntime.Native.Chartjs.values = {
       toArray: toArray,
       showRGBA: showRGBA,
-      lineChartRaw: F3(lineChartRaw)
+      lineChartRaw: F4(lineChartRaw)
     };
   });
 }).call(this);

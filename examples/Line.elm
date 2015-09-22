@@ -34,8 +34,8 @@ mail = let
 
 view : Bool -> Html
 view isClicked = div []
-  [ fromElement <| chart 700 300 (if isClicked then data' else data)
-  , button [E.onClick mail.address True] [text "update"] ]
+  [ fromElement <| chart 700 300 (if isClicked then data' else data) defaultOptions
+  , button [E.onClick mail.address True] [text "toggle"] ]
 
 main : Signal Html
 main = view <~ mail.signal

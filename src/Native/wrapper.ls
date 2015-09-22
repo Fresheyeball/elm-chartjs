@@ -22,8 +22,8 @@ createNode = (elementType) ->
   n.style.position = "relative"
   return n
 
-genLineChart = ({w, h, data}, canvas) ->
-  new Chart canvas.getContext "2d" .Line data, {}
+genLineChart = ({w, h, data, options}, canvas) ->
+  new Chart canvas.getContext "2d" .Line data, options
 
 setWrapSize = (wrap, {w, h}) ->
   wrap.style.width = px w
@@ -55,16 +55,16 @@ render = (model) ->
 showRGBA = ({_0,_1,_2,_3}) ->
   "rgba(#{_0},#{_1},#{_2},#{_3})"
 
-lineChartRaw = (w, h, data) ->
+lineChartRaw = (w, h, data, options) ->
   A3 NativeElement.newElement, w, h, {
     ctor: 'Custom'
     type: 'Chart'
     render
     update
-    model: {w, h, data} }
+    model: { w, h, data, options } }
 
 localRuntime.Native.Chartjs.values = {
   toArray
   showRGBA
-  lineChartRaw : F3 lineChartRaw
+  lineChartRaw : F4 lineChartRaw
 }
