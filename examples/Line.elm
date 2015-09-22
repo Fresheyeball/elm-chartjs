@@ -1,6 +1,6 @@
 module Line where
 
-import Chartjs exposing (..)
+import Chartjs.Line exposing (..)
 import Color exposing (..)
 import Signal exposing (..)
 import Html exposing (..)
