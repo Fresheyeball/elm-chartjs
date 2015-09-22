@@ -1,14 +1,12 @@
 module Chartjs.Line
-  ( Options
-  , defaultLineOptions
+  ( Config
   , chart
-  , LineStyle
-  , defStyle
-  , defaultStyle
+  , Options, defaultOptions
+  , Style, defStyle, defaultStyle
   ) where
 
 import Color exposing (white, rgba, Color)
-import Chartjs exposing (Label, JSArray. Labels)
+import Chartjs exposing (Label, JSArray, Labels, toArray, showRGBA)
 import Graphics.Element exposing (Element)
 
 type alias Options =
@@ -47,7 +45,7 @@ defaultOptions =
   , legendTemplate = "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>" }
 
 {-| foo -}
-type alias LineStyle =
+type alias Style =
   { fillColor: Color
   , strokeColor: Color
   , pointColor: Color
@@ -55,12 +53,12 @@ type alias LineStyle =
   , pointHighlightFill: Color
   , pointHighlightStroke: Color }
 
-defaultLineStyle : LineStyle
-defaultLineStyle =
-  defLineStyle (rgba 220 220 220)
+defaultStyle : Style
+defaultStyle =
+  defStyle (rgba 220 220 220)
 
-defLineStyle : (Float -> Color) -> LineStyle
-defLineStyle f =
+defStyle : (Float -> Color) -> Style
+defStyle f =
   { fillColor = f 0.2
   , strokeColor = f 1.0
   , pointColor = f 1.0
@@ -68,7 +66,7 @@ defLineStyle f =
   , pointHighlightFill = white
   , pointHighlightStroke = f 1.0 }
 
-type alias LineSeries = (Label, LineStyle, List Float)
+type alias LineSeries = (Label, Style, List Float)
 
 type alias Config = (Labels, List LineSeries)
 
@@ -84,8 +82,8 @@ type alias ConfigRaw =
       , pointHighlightStroke : String
       , data : JSArray Float } }
 
-decodeLineData : Config -> ConfigRaw
-decodeLineData (labels, series) = let
+decodeData : Config -> ConfigRaw
+decodeData (labels, series) = let
   decodeLineSeries (label, style, d) =
     { label = label
     , fillColor = showRGBA style.fillColor
@@ -98,8 +96,8 @@ decodeLineData (labels, series) = let
   in { labels = toArray labels
      , datasets = toArray (List.map decodeLineSeries series) }
 
-lineChartRaw : Int -> Int -> ConfigRaw -> Element
-lineChartRaw = Native.Chartjs.lineChartRaw
+chartRaw : Int -> Int -> ConfigRaw -> Element
+chartRaw = Native.Chartjs.lineChartRaw
 
-lineChart : Int -> Int -> Config -> Element
-lineChart w h = lineChartRaw w h << decodeLineData
+chart : Int -> Int -> Config -> Element
+chart w h = chartRaw w h << decodeData
