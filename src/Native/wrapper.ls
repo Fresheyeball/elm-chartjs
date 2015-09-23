@@ -1,3 +1,4 @@
+``/* @flow */``
 Elm.Native ||= {}
 Elm.Native.Chartjs ||= {}
 
@@ -11,7 +12,14 @@ return v if v = localRuntime.Native.Chartjs.values
 NativeElement = Elm.Native.Graphics.Element.make localRuntime
 {toArray} = Elm.Native.List.make localRuntime
 
+# convert underlying Elm Color type to a string
+showRGBA = ({_0,_1,_2,_3}) ->
+  "rgba(#{_0},#{_1},#{_2},#{_3})"
+
 px = (x) -> "#{x}px"
+
+b = (x) -> x * 5
+b "fpp"
 
 Chart.defaults.global.animation = false
 
@@ -52,8 +60,7 @@ render = (model) ->
   update wrap, model, model
   return wrap
 
-showRGBA = ({_0,_1,_2,_3}) ->
-  "rgba(#{_0},#{_1},#{_2},#{_3})"
+
 
 lineChartRaw = (w, h, data, options) ->
   A3 NativeElement.newElement, w, h, {

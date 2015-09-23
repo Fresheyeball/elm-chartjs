@@ -40,6 +40,18 @@ type alias ConfigRaw =
       , highlightStroke : String
       , data : JSArray Float } }
 
+decodeConfig : Config -> ConfigRaw
+decodeConfig (labels, series) = let
+  decodeSeries (label, style, d) =
+    { label = label
+    , fillColor = showRGBA style.fillColor
+    , strokeColor = showRGBA style.strokeColor
+    , highlightFill = showRGBA style.highlightFill
+    , highlightStroke = showRGBA style.highlightStroke
+    , data = toArray d }
+  in { labels = toArray labels
+     , datasets = toArray (List.map decodeSeries series) }
+
 type alias Options =
   { scaleBeginAtZero : Bool
   , scaleShowGridLines : Bool
@@ -80,8 +92,12 @@ defaultOptions =
   , barDatasetSpacing = 1.0
   , legendTemplate = "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].fillColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>" }
 
+decodeOptions : Options -> OptionsRaw
+decodeOptions o =
+  { o | scaleGridLineColor <- showRGBA o.scaleGridLineColor }
+
 chartRaw : Int -> Int -> ConfigRaw -> OptionsRaw -> Element
-chartRaw = Native.Chartjs.lineChartRaw
+chartRaw = Native.Chartjs.barChartRaw
 
 chart : Int -> Int -> Config -> Options -> Element
 chart w h c o = chartRaw w h (decodeConfig c) (decodeOptions o)
