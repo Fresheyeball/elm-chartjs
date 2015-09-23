@@ -98,6 +98,7 @@ decodeOptions o =
 
 chartRaw : Int -> Int -> ConfigRaw -> OptionsRaw -> Element
 chartRaw = Native.Chartjs.barChartRaw
+-- chartRaw = Debug.crash "t"
 
 chart : Int -> Int -> Config -> Options -> Element
 chart w h c o = chartRaw w h (decodeConfig c) (decodeOptions o)

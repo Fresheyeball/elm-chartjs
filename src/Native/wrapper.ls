@@ -1,4 +1,3 @@
-``/* @flow */``
 Elm.Native ||= {}
 Elm.Native.Chartjs ||= {}
 
@@ -12,14 +11,7 @@ return v if v = localRuntime.Native.Chartjs.values
 NativeElement = Elm.Native.Graphics.Element.make localRuntime
 {toArray} = Elm.Native.List.make localRuntime
 
-# convert underlying Elm Color type to a string
-showRGBA = ({_0,_1,_2,_3}) ->
-  "rgba(#{_0},#{_1},#{_2},#{_3})"
-
 px = (x) -> "#{x}px"
-
-b = (x) -> x * 5
-b "fpp"
 
 Chart.defaults.global.animation = false
 
@@ -30,11 +22,8 @@ createNode = (elementType) ->
   n.style.position = "relative"
   return n
 
-genLineChart = ({data, options}, canvas) ->
+genLineChart = ({w, h, data, options}, canvas) ->
   new Chart canvas.getContext "2d" .Line data, options
-
-genBarChart = ({data, options}, canvas) ->
-  new Chart canvas.getContext "2d" .Bar data, options
 
 setWrapSize = (wrap, {w, h}) ->
   wrap.style.width = px w
@@ -47,35 +36,38 @@ setWrapSize = (wrap, {w, h}) ->
   canvas.width  = w * ratio
   canvas.height = h * ratio
 
-update = (gen) -> (wrap, _, newModel) ->
+update = (wrap, _, newModel) ->
   if wrap.__chart
     wrap.__chart.clear!.destroy!
     setWrapSize wrap, newModel
-    wrap.__chart = gen newModel, wrap.firstChild
+    wrap.__chart = genLineChart newModel, wrap.firstChild
   return wrap
 
-render = (gen) -> (model) ->
+render = (model) ->
   wrap = createNode "div"
   canvas = NativeElement.createNode 'canvas'
   wrap.appendChild canvas
   setWrapSize wrap, model
-  setTimeout (-> wrap.__chart = gen model, canvas), 0
-  update(gen) wrap, model, model
+  setTimeout (-> wrap.__chart = genLineChart model, canvas), 0
+  update wrap, model, model
   return wrap
 
-chartRaw = (gen) -> (w, h, data, options) ->
+showRGBA = ({_0,_1,_2,_3}) ->
+  "rgba(#{_0},#{_1},#{_2},#{_3})"
+
+lineChartRaw = (w, h, data, options) ->
   A3 NativeElement.newElement, w, h, {
     ctor: 'Custom'
     type: 'Chart'
-    render: render gen
-    update: update gen
+    render
+    update
     model: { w, h, data, options } }
 
-lineChartRaw = chartRaw genLineChart
-barChartRaw = chartRaw genBarChart
+barChartRaw = (w, h, data, options) -> createNode "div"
 
 localRuntime.Native.Chartjs.values = {
   toArray
   showRGBA
   lineChartRaw : F4 lineChartRaw
+  barChartRaw : F4 barChartRaw
 }
