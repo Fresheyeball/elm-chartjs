@@ -30,8 +30,11 @@ createNode = (elementType) ->
   n.style.position = "relative"
   return n
 
-genLineChart = ({w, h, data, options}, canvas) ->
+genLineChart = ({data, options}, canvas) ->
   new Chart canvas.getContext "2d" .Line data, options
+
+genBarChart = ({data, options}, canvas) ->
+  new Chart canvas.getContext "2d" .Bar data, options
 
 setWrapSize = (wrap, {w, h}) ->
   wrap.style.width = px w
@@ -44,31 +47,32 @@ setWrapSize = (wrap, {w, h}) ->
   canvas.width  = w * ratio
   canvas.height = h * ratio
 
-update = (wrap, _, newModel) ->
+update = (gen) -> (wrap, _, newModel) ->
   if wrap.__chart
     wrap.__chart.clear!.destroy!
     setWrapSize wrap, newModel
-    wrap.__chart = genLineChart newModel, wrap.firstChild
+    wrap.__chart = gen newModel, wrap.firstChild
   return wrap
 
-render = (model) ->
+render = (gen) -> (model) ->
   wrap = createNode "div"
   canvas = NativeElement.createNode 'canvas'
   wrap.appendChild canvas
   setWrapSize wrap, model
-  setTimeout (-> wrap.__chart = genLineChart model, canvas), 0
-  update wrap, model, model
+  setTimeout (-> wrap.__chart = gen model, canvas), 0
+  update(gen) wrap, model, model
   return wrap
 
-
-
-lineChartRaw = (w, h, data, options) ->
+chartRaw = (gen) -> (w, h, data, options) ->
   A3 NativeElement.newElement, w, h, {
     ctor: 'Custom'
     type: 'Chart'
-    render
-    update
+    render: render gen
+    update: update gen
     model: { w, h, data, options } }
+
+lineChartRaw = chartRaw genLineChart
+barChartRaw = chartRaw genBarChart
 
 localRuntime.Native.Chartjs.values = {
   toArray

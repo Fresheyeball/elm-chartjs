@@ -12,5 +12,3 @@ toArray = Native.Chartjs.toArray
 
 showRGBA : Color -> String
 showRGBA = Native.Chartjs.showRGBA
-
--- lineChartRaw - 
