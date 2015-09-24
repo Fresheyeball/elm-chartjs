@@ -74,14 +74,14 @@ decodeOptions o =
       , pointLabelFontColor <- showRGBA o.pointLabelFontColor
       , pointLabelFontFamily <- "'" ++ o.pointLabelFontFamily ++ "'" }
 
-{-| Codification of the default options [Chartjs Docs](http://www.chartjs.org/docs/#line-chart-chart-options)
+{-| Codification of the default options [Chartjs Docs](http://www.chartjs.org/docs/#radar-chart-chart-options)
 
     chart 200 200 config defaultOptions
 
 Pass just one option
 
     chart 200 200 config
-      { defaultOptions | scaleShowGridLines <- False }
+      { defaultOptions | pointDot <- False }
 
 -}
 defaultOptions : Options

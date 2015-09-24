@@ -73,7 +73,7 @@ decodeOptions o =
 Pass just one option
 
     chart 200 200 config
-      { defaultOptions | scaleShowGridLines <- False }
+      { defaultOptions | datasetStroke <- False }
 
 -}
 defaultOptions : Options
