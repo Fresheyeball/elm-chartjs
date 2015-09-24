@@ -147,7 +147,7 @@ type alias ConfigRaw =
 
 decodeConfig : Config -> ConfigRaw
 decodeConfig (labels, series) = let
-  decodeLineSeries (label, style, d) =
+  decode (label, style, d) =
     { label = label
     , fillColor = showRGBA style.fillColor
     , strokeColor = showRGBA style.strokeColor
@@ -157,7 +157,7 @@ decodeConfig (labels, series) = let
     , pointHighlightStroke = showRGBA style.pointHighlightStroke
     , data = toArray d }
   in { labels = toArray labels
-     , datasets = toArray (List.map decodeLineSeries series) }
+     , datasets = toArray (List.map decode series) }
 
 {-| Create a Chartjs Line Chart in an Element
 

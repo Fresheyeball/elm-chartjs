@@ -3485,7 +3485,7 @@
     };
   };
   make(function(localRuntime){
-    var ref$, v, NativeElement, toArray, px, createNode, setWrapSize, update, render, showRGBA, chartRaw;
+    var ref$, v, NativeElement, toArray, createNode, setWrapSize, update, render, showRGBA, chartRaw;
     localRuntime.Native || (localRuntime.Native = {});
     (ref$ = localRuntime.Native).Chartjs || (ref$.Chartjs = {});
     if (v = localRuntime.Native.Chartjs.values) {
@@ -3493,9 +3493,6 @@
     }
     NativeElement = Elm.Native.Graphics.Element.make(localRuntime);
     toArray = Elm.Native.List.make(localRuntime).toArray;
-    px = function(x){
-      return x + "px";
-    };
     Chart.defaults.global.animation = false;
     createNode = function(elementType){
       var n;
@@ -3506,8 +3503,11 @@
       return n;
     };
     setWrapSize = function(wrap, arg$){
-      var w, h, canvas, ratio;
+      var w, h, px, canvas, ratio;
       w = arg$.w, h = arg$.h;
+      px = function(x){
+        return x + "px";
+      };
       wrap.style.width = px(w);
       wrap.style.height = px(h);
       canvas = wrap.firstChild;
