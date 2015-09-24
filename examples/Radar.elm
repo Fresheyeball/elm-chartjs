@@ -1,6 +1,6 @@
-module Bar where
+module Radar where
 
-import Chartjs.Bar exposing (..)
+import Chartjs.Radar exposing (..)
 import Color exposing (..)
 import Signal exposing (..)
 import Html exposing (..)
