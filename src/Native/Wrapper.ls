@@ -51,7 +51,7 @@ render = (gen) -> (model) ->
 showRGBA = ({_0,_1,_2,_3}) ->
   "rgba(#{_0},#{_1},#{_2},#{_3})"
 
-chartRaw = (type, w, h, data, options) ->
+chartRaw = F5 (type, w, h, data, options) ->
 
   gen = ({data, options}, canvas) ->
     new Chart(canvas.getContext "2d")[type] data, options
@@ -66,5 +66,5 @@ chartRaw = (type, w, h, data, options) ->
 localRuntime.Native.Chartjs.values = {
   toArray
   showRGBA
-  chartRaw : F5 chartRaw
+  chartRaw
 }

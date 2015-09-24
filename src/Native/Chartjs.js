@@ -3547,7 +3547,7 @@
       _0 = arg$._0, _1 = arg$._1, _2 = arg$._2, _3 = arg$._3;
       return "rgba(" + _0 + "," + _1 + "," + _2 + "," + _3 + ")";
     };
-    chartRaw = function(type, w, h, data, options){
+    chartRaw = F5(function(type, w, h, data, options){
       var gen;
       gen = function(arg$, canvas){
         var data, options;
@@ -3566,11 +3566,11 @@
           options: options
         }
       });
-    };
+    });
     return localRuntime.Native.Chartjs.values = {
       toArray: toArray,
       showRGBA: showRGBA,
-      chartRaw: F5(chartRaw)
+      chartRaw: chartRaw
     };
   });
 }).call(this);
