@@ -1,4 +1,4 @@
-module Line where
+module Bar where
 
 import Chartjs.Bar exposing (..)
 import Color exposing (..)
@@ -34,7 +34,7 @@ mail = let
 
 view : Bool -> Html
 view isClicked = div []
-  [ fromElement <| chart 700 300 (if isClicked then data' else data) defaultOptions
+  [ fromElement <| Chartjs.Bar.chart 700 300 (if isClicked then data' else data) defaultOptions
   , button [E.onClick mail.address True] [text "toggle"] ]
 
 main : Signal Html
