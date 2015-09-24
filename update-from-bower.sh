@@ -4,5 +4,17 @@ then
 fi
 
 bower install chartjs
-cp bower_components/chartjs/Chart.js src/Native
+
+# Linux
+if [ -e bower_components/Chart.js/Chart.js ]
+then
+  cp bower_components/Chart.js/Chart.js src/Native
+fi
+
+# Mac
+if [ -e bower_components/chartjs/Chart.js ]
+then
+  cp bower_components/chartjs/Chart.js src/Native
+fi
+
 rm -r bower_components

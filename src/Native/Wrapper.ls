@@ -22,12 +22,6 @@ createNode = (elementType) ->
   n.style.position = "relative"
   return n
 
-genLineChart = ({data, options}, canvas) ->
-  new Chart canvas.getContext "2d" .Line data, options
-
-genBarChart = ({data, options}, canvas) ->
-  new Chart canvas.getContext "2d" .Bar data, options
-
 setWrapSize = (wrap, {w, h}) ->
   wrap.style.width = px w
   wrap.style.height = px h
@@ -51,14 +45,18 @@ render = (gen) -> (model) ->
   canvas = NativeElement.createNode 'canvas'
   wrap.appendChild canvas
   setWrapSize wrap, model
-  setTimeout (-> wrap.__chart = genLineChart model, canvas), 0
+  setTimeout (-> wrap.__chart = gen model, canvas), 0
   update(gen) wrap, model, model
   return wrap
 
 showRGBA = ({_0,_1,_2,_3}) ->
   "rgba(#{_0},#{_1},#{_2},#{_3})"
 
-chartRaw = (gen) -> (w, h, data, options) ->
+chartRaw = (type, w, h, data, options) ->
+
+  gen = ({data, options}, canvas) ->
+    new Chart(canvas.getContext "2d")[type] data, options
+
   A3 NativeElement.newElement, w, h, {
     ctor: 'Custom'
     type: 'Chart'
@@ -66,12 +64,8 @@ chartRaw = (gen) -> (w, h, data, options) ->
     update: update gen
     model: { w, h, data, options } }
 
-lineChartRaw = chartRaw genLineChart
-barChartRaw = chartRaw genBarChart
-
 localRuntime.Native.Chartjs.values = {
   toArray
   showRGBA
-  lineChartRaw : F4 lineChartRaw
-  barChartRaw : F4 barChartRaw
+  chartRaw : F5 chartRaw
 }

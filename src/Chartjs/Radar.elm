@@ -1,11 +1,11 @@
-module Chartjs.Line
+module Chartjs.Radar
   ( chart, chart'
   , Options, defaultOptions
   , Series, Config
   , Style, defStyle, defaultStyle
   ) where
 
-{-| API wrapper for Chartjs Line charts
+{-| API wrapper for Chartjs Radar charts
 
 # Configure
 @docs Config, Series
@@ -20,22 +20,25 @@ module Chartjs.Line
 @docs Style, defStyle, defaultStyle
 -}
 
-import Color exposing (white, rgba, Color)
+import Color exposing (white, rgba, rgb, Color)
 import Chartjs exposing (..)
 import Graphics.Element exposing (Element)
 
-{-| Options for the Line Chart
+{-| Options for the Radar Chart
 [Chartjs Docs](http://www.chartjs.org/docs/#line-chart-chart-options).
 In most cases just use `defaultOptions`
 -}
 type alias Options =
-  { scaleShowGridLines : Bool
-  , scaleGridLineColor : Color
-  , scaleGridLineWidth : Float
-  , scaleShowHorizontalLines: Bool
-  , scaleShowVerticalLines: Bool
-  , bezierCurve : Bool
-  , bezierCurveTension : Float
+  { scaleShowLine : Bool
+  , angleShowLineOut : Bool
+  , scaleShowLabels : Bool
+  , scaleBeginAtZero : Bool
+  , angleLineColor : Color
+  , angleLineWidth : Float
+  , pointLabelFontFamily : String
+  , pointLabelFontStyle : String
+  , pointLabelFontSize : Float
+  , pointLabelFontColor : Color
   , pointDot : Bool
   , pointDotRadius : Float
   , pointDotStrokeWidth : Float
@@ -46,13 +49,16 @@ type alias Options =
   , legendTemplate : String }
 
 type alias OptionsRaw =
-  { scaleShowGridLines : Bool
-  , scaleGridLineColor : String
-  , scaleGridLineWidth : Float
-  , scaleShowHorizontalLines: Bool
-  , scaleShowVerticalLines: Bool
-  , bezierCurve : Bool
-  , bezierCurveTension : Float
+  { scaleShowLine : Bool
+  , angleShowLineOut : Bool
+  , scaleShowLabels : Bool
+  , scaleBeginAtZero : Bool
+  , angleLineColor : String
+  , angleLineWidth : Float
+  , pointLabelFontFamily : String
+  , pointLabelFontStyle : String
+  , pointLabelFontSize : Float
+  , pointLabelFontColor : String
   , pointDot : Bool
   , pointDotRadius : Float
   , pointDotStrokeWidth : Float
@@ -64,7 +70,9 @@ type alias OptionsRaw =
 
 decodeOptions : Options -> OptionsRaw
 decodeOptions o =
-  { o | scaleGridLineColor <- showRGBA o.scaleGridLineColor }
+  { o | angleLineColor <- showRGBA o.angleLineColor
+      , pointLabelFontColor <- showRGBA o.pointLabelFontColor
+      , pointLabelFontFamily <- "'" ++ o.pointLabelFontFamily ++ "'" }
 
 {-| Codification of the default options [Chartjs Docs](http://www.chartjs.org/docs/#line-chart-chart-options)
 
@@ -78,15 +86,18 @@ Pass just one option
 -}
 defaultOptions : Options
 defaultOptions =
-  { scaleShowGridLines = True
-  , scaleGridLineColor = rgba 0 0 0 0.05
-  , scaleGridLineWidth = 1.0
-  , scaleShowHorizontalLines = True
-  , scaleShowVerticalLines = True
-  , bezierCurve = True
-  , bezierCurveTension = 0.4
+  { scaleShowLine = True
+  , angleShowLineOut = True
+  , scaleShowLabels = False
+  , scaleBeginAtZero = True
+  , angleLineColor = rgba 0 0 0 0.1
+  , angleLineWidth = 1.0
+  , pointLabelFontFamily = "Arial"
+  , pointLabelFontStyle = "normal"
+  , pointLabelFontSize = 10.0
+  , pointLabelFontColor = rgb 102 102 102
   , pointDot = True
-  , pointDotRadius = 4.0
+  , pointDotRadius = 3.0
   , pointDotStrokeWidth = 1.0
   , pointHitDetectionRadius = 20.0
   , datasetStroke = True
@@ -94,8 +105,9 @@ defaultOptions =
   , datasetFill = True
   , legendTemplate = "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>" }
 
-{-| Style for a data line on the chart
-[Chartjs Docs](http://www.chartjs.org/docs/#line-chart-data-structure)
+
+{-| Style for a data zones on the chart
+[Chartjs Docs](http://www.chartjs.org/docs/#radar-chart-data-structure)
 -}
 type alias Style =
   { fillColor: Color
@@ -105,7 +117,7 @@ type alias Style =
   , pointHighlightFill: Color
   , pointHighlightStroke: Color }
 
-{-| A default style for lines, a light grey affair -}
+{-| A default style for zones, a light grey affair -}
 defaultStyle : Style
 defaultStyle =
   defStyle (rgba 220 220 220)
@@ -126,7 +138,7 @@ defStyle f =
   , pointHighlightStroke = f 1.0 }
 
 {-| A Series to plot. Chartjs speak this is a dataset.
-[Chartjs Docs](http://www.chartjs.org/docs/#line-chart-data-structure) -}
+[Chartjs Docs](http://www.chartjs.org/docs/#radar-chart-data-structure) -}
 type alias Series = (Label, Style, List Float)
 
 {-| Complete data model needed for rendering
@@ -159,13 +171,13 @@ decodeConfig (labels, series) = let
   in { labels = toArray labels
      , datasets = toArray (List.map decodeLineSeries series) }
 
-{-| Create a Chartjs Line Chart in an Element
+{-| Create a Chartjs Radar Chart in an Element
 
     chart height width myConfig defaultOptions
 
 -}
 chart : Int -> Int -> Config -> Options -> Element
-chart w h c o = chartRaw "Line" w h (decodeConfig c) (decodeOptions o)
+chart w h c o = chartRaw "Radar" w h (decodeConfig c) (decodeOptions o)
 
 {-| Same as `chart` but default options are assumed -}
 chart' : Int -> Int -> Config -> Element
