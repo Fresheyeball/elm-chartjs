@@ -65,14 +65,14 @@ decodeOptions o =
   { o | scaleBackdropColor <- showRGBA o.scaleBackdropColor
       , segmentStrokeColor <- showRGBA o.segmentStrokeColor }
 
-{-| Codification of the default options [Chartjs Docs](http://www.chartjs.org/docs/#line-chart-chart-options)
+{-| Codification of the default options [Chartjs Docs](http://www.chartjs.org/docs/#polar-area-chart-chart-options)
 
     chart 200 200 config defaultOptions
 
 Pass just one option
 
     chart 200 200 config
-      { defaultOptions | scaleShowGridLines <- False }
+      { defaultOptions | scaleBeginAtZero <- False }
 
 -}
 defaultOptions : Options
