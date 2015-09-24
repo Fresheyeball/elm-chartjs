@@ -1,11 +1,11 @@
-module Chartjs.Line
+module Chartjs.Bar
   ( chart, chart'
   , Options, defaultOptions
   , Series, Config
   , Style, defStyle, defaultStyle
   ) where
 
-{-| API wrapper for Chartjs Line charts
+{-| API wrapper for Chartjs Bar charts
 
 # Configure
 @docs Config, Series
@@ -24,8 +24,8 @@ import Color exposing (white, rgba, Color)
 import Chartjs exposing (..)
 import Graphics.Element exposing (Element)
 
-{-| Options for the Line Chart
-[Chartjs Docs](http://www.chartjs.org/docs/#line-chart-chart-options).
+{-| Options for the Bar Chart
+[Chartjs Docs](http://www.chartjs.org/docs/#bar-chart-chart-options).
 In most cases just use `defaultOptions`
 -}
 type alias Options =
@@ -66,7 +66,7 @@ decodeOptions : Options -> OptionsRaw
 decodeOptions o =
   { o | scaleGridLineColor <- showRGBA o.scaleGridLineColor }
 
-{-| Codification of the default options [Chartjs Docs](http://www.chartjs.org/docs/#line-chart-chart-options)
+{-| Codification of the default options [Chartjs Docs](http://www.chartjs.org/docs/#bar-chart-chart-options)
 
     chart 200 200 config defaultOptions
 
@@ -94,8 +94,8 @@ defaultOptions =
   , datasetFill = True
   , legendTemplate = "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>" }
 
-{-| Style for a data line on the chart
-[Chartjs Docs](http://www.chartjs.org/docs/#line-chart-data-structure)
+{-| Style for a bars on the chart
+[Chartjs Docs](http://www.chartjs.org/docs/#bar-chart-data-structure)
 -}
 type alias Style =
   { fillColor: Color
@@ -105,7 +105,7 @@ type alias Style =
   , pointHighlightFill: Color
   , pointHighlightStroke: Color }
 
-{-| A default style for lines, a light grey affair -}
+{-| A default style for bars, a light grey affair -}
 defaultStyle : Style
 defaultStyle =
   defStyle (rgba 220 220 220)
@@ -126,7 +126,7 @@ defStyle f =
   , pointHighlightStroke = f 1.0 }
 
 {-| A Series to plot. Chartjs speak this is a dataset.
-[Chartjs Docs](http://www.chartjs.org/docs/#line-chart-data-structure) -}
+[Chartjs Docs](http://www.chartjs.org/docs/#bar-chart-data-structure) -}
 type alias Series = (Label, Style, List Float)
 
 {-| Complete data model needed for rendering
@@ -159,13 +159,13 @@ decodeConfig (labels, series) = let
   in { labels = toArray labels
      , datasets = toArray (List.map decodeLineSeries series) }
 
-{-| Create a Chartjs Line Chart in an Element
+{-| Create a Chartjs Bar Chart in an Element
 
     chart height width myConfig defaultOptions
 
 -}
 chart : Int -> Int -> Config -> Options -> Element
-chart w h c o = chartRaw "Line" w h (decodeConfig c) (decodeOptions o)
+chart w h c o = chartRaw "Bar" w h (decodeConfig c) (decodeOptions o)
 
 {-| Same as `chart` but default options are assumed -}
 chart' : Int -> Int -> Config -> Element
