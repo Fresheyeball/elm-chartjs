@@ -11,8 +11,6 @@ return v if v = localRuntime.Native.Chartjs.values
 NativeElement = Elm.Native.Graphics.Element.make localRuntime
 {toArray} = Elm.Native.List.make localRuntime
 
-px = (x) -> "#{x}px"
-
 Chart.defaults.global.animation = false
 
 createNode = (elementType) ->
@@ -23,6 +21,7 @@ createNode = (elementType) ->
   return n
 
 setWrapSize = (wrap, {w, h}) ->
+  px = (x) -> "#{x}px"
   wrap.style.width = px w
   wrap.style.height = px h
   canvas = wrap.firstChild
