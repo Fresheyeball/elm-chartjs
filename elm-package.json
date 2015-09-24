@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
     "summary": "Chartjs Bindings for Elm",
-    "repository": "https://github.com/USER/PROJECT.git",
+    "repository": "https://github.com/Fresheyeball/elm-chartjs.git",
     "license": "BSD3",
     "source-directories": [
         "src"
