@@ -3485,7 +3485,7 @@
     };
   };
   make(function(localRuntime){
-    var ref$, v, NativeElement, toArray, px, createNode, genLineChart, setWrapSize, update, render, showRGBA, lineChartRaw, barChartRaw;
+    var ref$, v, NativeElement, toArray, px, createNode, genLineChart, genBarChart, setWrapSize, update, render, showRGBA, chartRaw, lineChartRaw, barChartRaw;
     localRuntime.Native || (localRuntime.Native = {});
     (ref$ = localRuntime.Native).Chartjs || (ref$.Chartjs = {});
     if (v = localRuntime.Native.Chartjs.values) {
@@ -3506,9 +3506,14 @@
       return n;
     };
     genLineChart = function(arg$, canvas){
-      var w, h, data, options;
-      w = arg$.w, h = arg$.h, data = arg$.data, options = arg$.options;
+      var data, options;
+      data = arg$.data, options = arg$.options;
       return new Chart(canvas.getContext("2d")).Line(data, options);
+    };
+    genBarChart = function(arg$, canvas){
+      var data, options;
+      data = arg$.data, options = arg$.options;
+      return new Chart(canvas.getContext("2d")).Bar(data, options);
     };
     setWrapSize = function(wrap, arg$){
       var w, h, canvas, ratio;
@@ -3523,48 +3528,53 @@
       canvas.width = w * ratio;
       return canvas.height = h * ratio;
     };
-    update = function(wrap, _, newModel){
-      if (wrap.__chart) {
-        wrap.__chart.clear().destroy();
-        setWrapSize(wrap, newModel);
-        wrap.__chart = genLineChart(newModel, wrap.firstChild);
-      }
-      return wrap;
+    update = function(gen){
+      return function(wrap, _, newModel){
+        if (wrap.__chart) {
+          wrap.__chart.clear().destroy();
+          setWrapSize(wrap, newModel);
+          wrap.__chart = gen(newModel, wrap.firstChild);
+        }
+        return wrap;
+      };
     };
-    render = function(model){
-      var wrap, canvas;
-      wrap = createNode("div");
-      canvas = NativeElement.createNode('canvas');
-      wrap.appendChild(canvas);
-      setWrapSize(wrap, model);
-      setTimeout(function(){
-        return wrap.__chart = genLineChart(model, canvas);
-      }, 0);
-      update(wrap, model, model);
-      return wrap;
+    render = function(gen){
+      return function(model){
+        var wrap, canvas;
+        wrap = createNode("div");
+        canvas = NativeElement.createNode('canvas');
+        wrap.appendChild(canvas);
+        setWrapSize(wrap, model);
+        setTimeout(function(){
+          return wrap.__chart = genLineChart(model, canvas);
+        }, 0);
+        update(gen)(wrap, model, model);
+        return wrap;
+      };
     };
     showRGBA = function(arg$){
       var _0, _1, _2, _3;
       _0 = arg$._0, _1 = arg$._1, _2 = arg$._2, _3 = arg$._3;
       return "rgba(" + _0 + "," + _1 + "," + _2 + "," + _3 + ")";
     };
-    lineChartRaw = function(w, h, data, options){
-      return A3(NativeElement.newElement, w, h, {
-        ctor: 'Custom',
-        type: 'Chart',
-        render: render,
-        update: update,
-        model: {
-          w: w,
-          h: h,
-          data: data,
-          options: options
-        }
-      });
+    chartRaw = function(gen){
+      return function(w, h, data, options){
+        return A3(NativeElement.newElement, w, h, {
+          ctor: 'Custom',
+          type: 'Chart',
+          render: render(gen),
+          update: update(gen),
+          model: {
+            w: w,
+            h: h,
+            data: data,
+            options: options
+          }
+        });
+      };
     };
-    barChartRaw = function(w, h, data, options){
-      return createNode("div");
-    };
+    lineChartRaw = chartRaw(genLineChart);
+    barChartRaw = chartRaw(genBarChart);
     return localRuntime.Native.Chartjs.values = {
       toArray: toArray,
       showRGBA: showRGBA,
