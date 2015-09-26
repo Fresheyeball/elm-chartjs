@@ -1,70 +1,56 @@
-Elm.Native ||= {}
-Elm.Native.Chartjs ||= {}
 
-make = (x) -> Elm.Native.Chartjs = make : x
-localRuntime <- make
-
-localRuntime.Native ||= {}
-localRuntime.Native.Chartjs ||= {}
+sanitizeNS = (x) -> x.Native ||= {}; x.Native.Chartjs ||= {}
+sanitizeNS Elm
+localRuntime <- (make) -> Elm.Native.Chartjs = {make}
+sanitizeNS localRuntime
 return v if v = localRuntime.Native.Chartjs.values
 
 NativeElement = Elm.Native.Graphics.Element.make localRuntime
-{toArray} = Elm.Native.List.make localRuntime
+{toArray}     = Elm.Native.List.make             localRuntime
 
 Chart.defaults.global.animation = false
 
 createNode = (elementType) ->
   n = document.createElement elementType
-  n.style.padding = 0
-  n.style.margin = 0
+  n.style.padding  = 0
+  n.style.margin   = 0
   n.style.position = "relative"
   return n
 
-setWrapSize = (wrap, {w, h}) ->
-  px = (x) -> "#{x}px"
-  wrap.style.width = px w
-  wrap.style.height = px h
+setWrapSize = (wrap, {w, h}) !->
+  setWH = (w_, h_, x) !->
+    x.width  = "#{w_}px"
+    x.height = "#{h_}px"
+  ratio  = window.devicePixelRatio || 1
   canvas = wrap.firstChild
-  canvas.style.width  = px w
-  canvas.style.height = px h
-  canvas.style.display = "block"
-  ratio = window.devicePixelRatio || 1
-  canvas.width  = w * ratio
-  canvas.height = h * ratio
+  setWH w * ratio, h * ratio, canvas
+  setWH w,         h,         wrap.style
+  setWH w,         h,         canvas.style
 
-update = (gen) -> (wrap, _, newModel) ->
-  if wrap.__chart
-    wrap.__chart.clear!.destroy!
-    setWrapSize wrap, newModel
-    wrap.__chart = gen newModel, wrap.firstChild
+update = (type, wrap, _, model) -->
+  setWrapSize wrap, model
+  wrap.__chart.clear!.destroy! if wrap.__chart
+  wrap.__chart = new Chart(wrap.firstChild.getContext "2d")[type] model.data, model.options
   return wrap
 
-render = (gen) -> (model) ->
+render = (type, model) -->
   wrap = createNode "div"
   canvas = NativeElement.createNode 'canvas'
   wrap.appendChild canvas
   setWrapSize wrap, model
-  setTimeout (-> wrap.__chart = gen model, canvas), 0
-  update(gen) wrap, model, model
+  setTimeout (-> update type, wrap, model, model), 0
   return wrap
 
 showRGBA = ({_0,_1,_2,_3}) ->
   "rgba(#{_0},#{_1},#{_2},#{_3})"
 
 chartRaw = F5 (type, w, h, data, options) ->
+  A3 NativeElement.newElement, w, h,
+    ctor   : 'Custom'
+    type   : 'Chart'
+    render : render type
+    update : update type
+    model  : { w, h, data, options }
 
-  gen = ({data, options}, canvas) ->
-    new Chart(canvas.getContext "2d")[type] data, options
-
-  A3 NativeElement.newElement, w, h, {
-    ctor: 'Custom'
-    type: 'Chart'
-    render: render gen
-    update: update gen
-    model: { w, h, data, options } }
-
-localRuntime.Native.Chartjs.values = {
-  toArray
-  showRGBA
-  chartRaw
-}
+localRuntime.Native.Chartjs.values =
+  {toArray, showRGBA, chartRaw }
