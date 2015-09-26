@@ -1,4 +1,3 @@
-
 sanitizeNS = (x) -> x.Native ||= {}; x.Native.Chartjs ||= {}
 sanitizeNS Elm
 localRuntime <- (make) -> Elm.Native.Chartjs = {make}
