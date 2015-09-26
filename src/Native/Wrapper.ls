@@ -53,4 +53,4 @@ chartRaw = F5 (type, w, h, data, options) ->
     model  : { w, h, data, options }
 
 localRuntime.Native.Chartjs.values =
-  {toArray, showRGBA, chartRaw }
+  { toArray, showRGBA, chartRaw }
