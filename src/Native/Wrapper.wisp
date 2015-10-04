@@ -21,17 +21,16 @@
       (setWH    wh.w           wh.h        wrap.style)
       (setWH    wh.w           wh.h        canvas.style))))
 
-(defn- update [type, wrap, _, model]
-  (do
-    (setWrapSize wrap model)
-    (if wrap.__chart (do
-      (wrap.__chart.clear) (wrap.__chart.destroy)))
-    (!set wrap.__chart
-      ((aget (Chart. (wrap.firstChild.getContext :2d)) type)
-        model.data model.options))
-    wrap))
+(defn- update [type] (fn [wrap _ model] (do
+  (setWrapSize wrap model)
+  (if wrap.__chart (do
+    (wrap.__chart.clear) (wrap.__chart.destroy)))
+  (!set wrap.__chart
+    ((aget (Chart. (wrap.firstChild.getContext :2d)) type)
+      model.data model.options))
+  wrap)))
 
-(defn- render [type model]
+(defn- render [type NativeElement] (fn [model]
   (let
     [wrap (createNode :div)
      canvas (NativeElement.createNode :canvas)]
@@ -39,28 +38,26 @@
       (wrap.appendChild canvas)
       (setWrapSize wrap model)
       (setTimeout (fn [] (update type wrap model model)) 0)
-      wrap)))
+      wrap))))
 
 (defn- showRGBA [c]
   (+ "rgba(" c._0 "," c._1 "," c._2 "," c._3 ")"))
 
-(defn- chartRaw [type, w, h, data, options]
+(defn- chartRaw [NativeElement] (fn [type, w, h, data, options]
   (A3 (NativeElement.newElement w h {
     :ctor "Custom"
     :type "Chart"
-    :render (render type)
+    :render (render type NativeElement)
     :update (update type)
-    :model {:w w :h h :data data :options options}})))
+    :model {:w w :h h :data data :options options}}))))
 
-(aget x "foo")
-
-; (defn- make [localRuntime] (let
-;   [NativeElement (Elm.Native.Graphics.Element.make localRuntime)
-;    toArray       (Elm.Native.List.make             localRuntime).toArray ]
-;   (!set localRuntime.Native.Chartjs.values {
-;     :toArray      toArray
-;     :showRGBA     showRGBA
-;     :chartRaw (F5 chartRaw)})))
+(defn- make [localRuntime] (let
+  [NativeElement (Elm.Native.Graphics.Element.make localRuntime)
+   toArray       (:toArray (Elm.Native.List.make   localRuntime))]
+  (!set localRuntime.Native.Chartjs.values {
+    :toArray      toArray
+    :showRGBA     showRGBA
+    :chartRaw (F5 (chartRaw NativeElement))})))
 
 (sanitizeNS Elm)
 (set! Elm.Native.Chartjs.make make)
