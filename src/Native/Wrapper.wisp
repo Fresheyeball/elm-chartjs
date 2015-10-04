@@ -35,9 +35,10 @@
     [wrap (createNode :div)
      canvas (NativeElement.createNode :canvas)]
     (do
+      (.log console "wowzers")
       (wrap.appendChild canvas)
       (setWrapSize wrap model)
-      (setTimeout (fn [] (update type wrap model model)) 0)
+      (setTimeout (fn [] ((update type) wrap model model)) 0)
       wrap))))
 
 (defn- showRGBA [c]
