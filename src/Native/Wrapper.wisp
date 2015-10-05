@@ -1,6 +1,8 @@
-(defn- sanitizeNS [x] (do
-  (if x.Native nil (set! x.Native {}))
-  (if x.Native.Chartjs nil (set! x.Native.Chartjs {}))))
+(defn- sanitize [record & spaces]
+  (spaces.reduce (fn [r space] (do
+    (if (aget r space) nil (set! (aget r space) {}))
+    (aget r space)))
+  record))
 
 (defn- createNode [elementType]
   (let [n (document.createElement elementType)] (do
@@ -49,12 +51,14 @@
 (defn- make [localRuntime] (let
   [NativeElement (Elm.Native.Graphics.Element.make localRuntime)
    toArray       (:toArray (Elm.Native.List.make   localRuntime))]
-  (do (sanitizeNS localRuntime)
-      (set! localRuntime.Native.Chartjs.values {
-        :toArray      toArray
-        :showRGBA     showRGBA
-        :chartRaw (F5 (chartRaw NativeElement))}))))
+  (do (sanitize localRuntime :Native :Chartjs)
+      (if localRuntime.Native.Chartjs.values
+          localRuntime.Native.Chartjs.values
+          (set! localRuntime.Native.Chartjs.values {
+            :toArray      toArray
+            :showRGBA     showRGBA
+            :chartRaw (F5 (chartRaw NativeElement))})))))
 
-(sanitizeNS Elm)
+(sanitize Elm :Native :Chartjs)
 (set! Elm.Native.Chartjs.make make)
 (set! Chart.defaults.global.animation false)
