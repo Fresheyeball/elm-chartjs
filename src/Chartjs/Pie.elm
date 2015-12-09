@@ -52,7 +52,7 @@ type alias OptionsRaw =
 
 decodeOptions : Options -> OptionsRaw
 decodeOptions o =
-  { o | segmentStrokeColor <- showRGBA o.segmentStrokeColor }
+  { o | segmentStrokeColor = showRGBA o.segmentStrokeColor }
 
 {-| Codification of the default options [Chartjs Docs](http://www.chartjs.org/docs/#pie-chart-chart-options)
 
@@ -61,7 +61,7 @@ decodeOptions o =
 Pass just one option
 
     chart 200 200 config
-      { defaultOptions | segmentShowStroke <- False }
+      { defaultOptions | segmentShowStroke = False }
 
 -}
 defaultOptions : Options
