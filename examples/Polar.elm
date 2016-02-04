@@ -27,7 +27,7 @@ data' =
 mail : Mailbox Bool
 mail = let
   m = mailbox False
-  in { m | signal <-
+  in { m | signal =
     foldp (always not) False m.signal }
 
 view : Bool -> Html
