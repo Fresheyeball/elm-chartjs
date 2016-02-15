@@ -29,7 +29,7 @@ data' =
 mail : Mailbox Bool
 mail = let
   m = mailbox False
-  in { m | signal <-
+  in { m | signal =
     foldp (always not) False m.signal }
 
 view : Bool -> Html
@@ -38,4 +38,4 @@ view isClicked = div []
   , button [E.onClick mail.address True] [text "toggle"] ]
 
 main : Signal Html
-main = view <~ mail.signal
+main = Signal.map view mail.signal

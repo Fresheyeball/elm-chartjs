@@ -62,8 +62,8 @@ type alias OptionsRaw =
 
 decodeOptions : Options -> OptionsRaw
 decodeOptions o =
-  { o | scaleBackdropColor <- showRGBA o.scaleBackdropColor
-      , segmentStrokeColor <- showRGBA o.segmentStrokeColor }
+  { o | scaleBackdropColor = showRGBA o.scaleBackdropColor
+      , segmentStrokeColor = showRGBA o.segmentStrokeColor }
 
 {-| Codification of the default options [Chartjs Docs](http://www.chartjs.org/docs/#polar-area-chart-chart-options)
 
@@ -72,7 +72,7 @@ decodeOptions o =
 Pass just one option
 
     chart 200 200 config
-      { defaultOptions | scaleBeginAtZero <- False }
+      { defaultOptions | scaleBeginAtZero = False }
 
 -}
 defaultOptions : Options

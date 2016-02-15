@@ -64,7 +64,7 @@ type alias OptionsRaw =
 
 decodeOptions : Options -> OptionsRaw
 decodeOptions o =
-  { o | scaleGridLineColor <- showRGBA o.scaleGridLineColor }
+  { o | scaleGridLineColor = showRGBA o.scaleGridLineColor }
 
 {-| Codification of the default options [Chartjs Docs](http://www.chartjs.org/docs/#bar-chart-chart-options)
 
@@ -73,7 +73,7 @@ decodeOptions o =
 Pass just one option
 
     chart 200 200 config
-      { defaultOptions | datasetStroke <- False }
+      { defaultOptions | datasetStroke = False }
 
 -}
 defaultOptions : Options

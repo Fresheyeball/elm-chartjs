@@ -70,9 +70,9 @@ type alias OptionsRaw =
 
 decodeOptions : Options -> OptionsRaw
 decodeOptions o =
-  { o | angleLineColor <- showRGBA o.angleLineColor
-      , pointLabelFontColor <- showRGBA o.pointLabelFontColor
-      , pointLabelFontFamily <- "'" ++ o.pointLabelFontFamily ++ "'" }
+  { o | angleLineColor = showRGBA o.angleLineColor
+      , pointLabelFontColor = showRGBA o.pointLabelFontColor
+      , pointLabelFontFamily = "'" ++ o.pointLabelFontFamily ++ "'" }
 
 {-| Codification of the default options [Chartjs Docs](http://www.chartjs.org/docs/#radar-chart-chart-options)
 
@@ -81,7 +81,7 @@ decodeOptions o =
 Pass just one option
 
     chart 200 200 config
-      { defaultOptions | pointDot <- False }
+      { defaultOptions | pointDot = False }
 
 -}
 defaultOptions : Options
