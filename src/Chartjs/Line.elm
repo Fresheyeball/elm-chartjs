@@ -1,9 +1,4 @@
-module Chartjs.Line
-  ( chart, chart'
-  , Options, defaultOptions
-  , Series, Config
-  , Style, defStyle, defaultStyle
-  ) where
+module Chartjs.Line (chart, chart', Options, defaultOptions, Series, Config, Style, defStyle, defaultStyle) where
 
 {-| API wrapper for Chartjs Line charts
 
@@ -24,6 +19,7 @@ import Color exposing (white, rgba, Color)
 import Chartjs exposing (..)
 import Graphics.Element exposing (Element)
 
+
 {-| Options for the Line Chart
 [Chartjs Docs](http://www.chartjs.org/docs/#line-chart-chart-options).
 In most cases just use `defaultOptions`
@@ -32,8 +28,8 @@ type alias Options =
   { scaleShowGridLines : Bool
   , scaleGridLineColor : Color
   , scaleGridLineWidth : Float
-  , scaleShowHorizontalLines: Bool
-  , scaleShowVerticalLines: Bool
+  , scaleShowHorizontalLines : Bool
+  , scaleShowVerticalLines : Bool
   , bezierCurve : Bool
   , bezierCurveTension : Float
   , pointDot : Bool
@@ -43,14 +39,19 @@ type alias Options =
   , datasetStroke : Bool
   , datasetStrokeWidth : Float
   , datasetFill : Bool
-  , legendTemplate : String }
+  , legendTemplate : String
+  , animation : Bool
+  , animationSteps : Int
+  , animationEasing : String
+  }
+
 
 type alias OptionsRaw =
   { scaleShowGridLines : Bool
   , scaleGridLineColor : String
   , scaleGridLineWidth : Float
-  , scaleShowHorizontalLines: Bool
-  , scaleShowVerticalLines: Bool
+  , scaleShowHorizontalLines : Bool
+  , scaleShowVerticalLines : Bool
   , bezierCurve : Bool
   , bezierCurveTension : Float
   , pointDot : Bool
@@ -60,11 +61,17 @@ type alias OptionsRaw =
   , datasetStroke : Bool
   , datasetStrokeWidth : Float
   , datasetFill : Bool
-  , legendTemplate : String }
+  , legendTemplate : String
+  , animation : Bool
+  , animationSteps : Int
+  , animationEasing : String
+  }
+
 
 decodeOptions : Options -> OptionsRaw
 decodeOptions o =
   { o | scaleGridLineColor = showRGBA o.scaleGridLineColor }
+
 
 {-| Codification of the default options [Chartjs Docs](http://www.chartjs.org/docs/#line-chart-chart-options)
 
@@ -79,7 +86,7 @@ Pass just one option
 defaultOptions : Options
 defaultOptions =
   { scaleShowGridLines = True
-  , scaleGridLineColor = rgba 0 0 0 0.05
+  , scaleGridLineColor = rgba 0 0 0 5.0e-2
   , scaleGridLineWidth = 1.0
   , scaleShowHorizontalLines = True
   , scaleShowVerticalLines = True
@@ -92,23 +99,32 @@ defaultOptions =
   , datasetStroke = True
   , datasetStrokeWidth = 2.0
   , datasetFill = True
-  , legendTemplate = "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>" }
+  , legendTemplate = "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
+  , animation = False
+  , animationSteps = 60
+  , animationEasing = "easeOutQuart"
+  }
+
 
 {-| Style for a data line on the chart
 [Chartjs Docs](http://www.chartjs.org/docs/#line-chart-data-structure)
 -}
 type alias Style =
-  { fillColor: Color
-  , strokeColor: Color
-  , pointColor: Color
-  , pointStrokeColor: Color
-  , pointHighlightFill: Color
-  , pointHighlightStroke: Color }
+  { fillColor : Color
+  , strokeColor : Color
+  , pointColor : Color
+  , pointStrokeColor : Color
+  , pointHighlightFill : Color
+  , pointHighlightStroke : Color
+  }
 
-{-| A default style for lines, a light grey affair -}
+
+{-| A default style for lines, a light grey affair
+-}
 defaultStyle : Style
 defaultStyle =
   defStyle (rgba 220 220 220)
+
 
 {-| Convience function for making styles based on
 a single color.
@@ -123,41 +139,58 @@ defStyle f =
   , pointColor = f 1.0
   , pointStrokeColor = white
   , pointHighlightFill = white
-  , pointHighlightStroke = f 1.0 }
+  , pointHighlightStroke = f 1.0
+  }
+
 
 {-| A Series to plot. Chartjs speak this is a dataset.
-[Chartjs Docs](http://www.chartjs.org/docs/#line-chart-data-structure) -}
-type alias Series = (Label, Style, List Float)
+[Chartjs Docs](http://www.chartjs.org/docs/#line-chart-data-structure)
+-}
+type alias Series =
+  ( Label, Style, List Float )
+
 
 {-| Complete data model needed for rendering
-Chartjs referrs to this as simply `data` in their docs -}
-type alias Config = (Labels, List Series)
+Chartjs referrs to this as simply `data` in their docs
+-}
+type alias Config =
+  ( Labels, List Series )
+
 
 type alias ConfigRaw =
   { labels : JSArray String
-     , datasets : JSArray
-      { label : String
-      , fillColor : String
-      , strokeColor : String
-      , pointColor : String
-      , pointStrokeColor : String
-      , pointHighlightFill : String
-      , pointHighlightStroke : String
-      , data : JSArray Float } }
+  , datasets :
+      JSArray
+        { label : String
+        , fillColor : String
+        , strokeColor : String
+        , pointColor : String
+        , pointStrokeColor : String
+        , pointHighlightFill : String
+        , pointHighlightStroke : String
+        , data : JSArray Float
+        }
+  }
+
 
 decodeConfig : Config -> ConfigRaw
-decodeConfig (labels, series) = let
-  decode (label, style, d) =
-    { label = label
-    , fillColor = showRGBA style.fillColor
-    , strokeColor = showRGBA style.strokeColor
-    , pointColor = showRGBA style.pointColor
-    , pointStrokeColor = showRGBA style.pointStrokeColor
-    , pointHighlightFill = showRGBA style.pointHighlightFill
-    , pointHighlightStroke = showRGBA style.pointHighlightStroke
-    , data = toArray d }
-  in { labels = toArray labels
-     , datasets = toArray (List.map decode series) }
+decodeConfig ( labels, series ) =
+  let
+    decode ( label, style, d ) =
+      { label = label
+      , fillColor = showRGBA style.fillColor
+      , strokeColor = showRGBA style.strokeColor
+      , pointColor = showRGBA style.pointColor
+      , pointStrokeColor = showRGBA style.pointStrokeColor
+      , pointHighlightFill = showRGBA style.pointHighlightFill
+      , pointHighlightStroke = showRGBA style.pointHighlightStroke
+      , data = toArray d
+      }
+  in
+    { labels = toArray labels
+    , datasets = toArray (List.map decode series)
+    }
+
 
 {-| Create a Chartjs Line Chart in an Element
 
@@ -165,8 +198,12 @@ decodeConfig (labels, series) = let
 
 -}
 chart : Int -> Int -> Config -> Options -> Element
-chart w h c o = chartRaw "Line" w h (decodeConfig c) (decodeOptions o)
+chart w h c o =
+  chartRaw "Line" w h (decodeConfig c) (decodeOptions o)
 
-{-| Same as `chart` but default options are assumed -}
+
+{-| Same as `chart` but default options are assumed
+-}
 chart' : Int -> Int -> Config -> Element
-chart' w h c = chart w h c defaultOptions
+chart' w h c =
+  chart w h c defaultOptions
